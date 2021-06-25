@@ -1,0 +1,69 @@
+{
+  "client": {
+    //"ip": "121.128.80.14",
+    "ip": "localhost",
+    //"ip": "0.0.0.0",
+    "port": 50000
+  },
+  "smtp": {
+    "host": "121.128.243.16",
+    "port": 25,
+    "sender": "forwarder@punchpowerglide.com",
+    "recipients": [ "pierrel.f@sfeir.com" ]
+  },
+  "opc-ua": {
+    "endpoint": "opc.tcp://localhost:49320",
+    "applicationName": "OPC.UA.TEST",
+    "nodes": {
+      "is_op1400": {
+        "dataAvailable": "ns=2;s=InputShaft_OP1400.72374Lang.DataAvailable",
+        "readingInProgress": "ns=2;s=InputShaft_OP1400.72374Lang.ReadingInProgress",
+        "readingFinished": "ns=2;s=InputShaft_OP1400.72374Lang.ReadingFinished",
+        "dmc": "ns=2;s=InputShaft_OP1400.72374Lang.Dmc",
+        "ftg_lang": "ns=2;s=InputShaft_OP1400.72374Lang.FTG_Lang",
+        "gar_lang": "ns=2;s=InputShaft_OP1400.72374Lang.GAR_Lang",
+        "nio_lang": "ns=2;s=InputShaft_OP1400.72374Lang.NIO_Lang"
+      },
+      "is_op250": {
+        "dataAvailable": "ns=2;s=Test_MFG.74229.DataAvailable",
+        "readingInProgress": "ns=2;s=Test_MFG.74229.ReadingInProgress",
+        "readingFinished": "ns=2;s=Test_MFG.74229.ReadingFinished",
+        "DI": "ns=2;s=Test_MFG.74229.DI",
+        "DS": "ns=2;s=Test_MFG.74229.DS",
+        "DR": "ns=2;s=Test_MFG.74229.DR",
+        "PD": "ns=2;s=Test_MFG.74229.PD",
+        "HD": "ns=2;s=Test_MFG.74229.HD",
+        "AN": "ns=2;s=Test_MFG.74229.AN",
+        "FD": "ns=2;s=Test_MFG.74229.FD",
+        "UE": "ns=2;s=Test_MFG.74229.UE",
+        "dmc": "ns=2;s=Test_MFG.74229.Dmc",
+        "limSup_Chgmt_Marq_DMC": "ns=2;s=Test_MFG.74229.limSup_Chgmt_Marq_DMC",
+        "limSup_Chgmt_Marq_Texte": "ns=2;s=Test_MFG.74229.limSup_Chgmt_Marq_Texte",
+        "compt_Marq_DMC": "ns=2;s=Test_MFG.74229.Compt_Marq_DMC",
+        "compt_Marq_Texte": "ns=2;s=Test_MFG.74229.Compt_Marq_Texte",
+        "press_marq_dr_LB": "ns=2;s=Test_MFG.74229.Press_marq_dr_LB",
+        "press_marq_dr_LH": "ns=2;s=Test_MFG.74229.Press_marq_dr_LH",
+        "press_marq_dr_VReel": "ns=2;s=Test_MFG.74229.Press_marq_dr_VReel",
+        "press_marq_gc_LB": "ns=2;s=Test_MFG.74229.Press_marq_gc_LB",
+        "press_marq_gc_LH": "ns=2;s=Test_MFG.74229.Press_marq_gc_LH",
+        "press_marq_gc_VReel": "ns=2;s=Test_MFG.74229.Press_marq_gc_VReel"
+      },
+      "os_op3200": {
+        "dataAvailable": "ns=2;s=OutputShaft_OP3200.63518.Donnees_disponible",
+        "readingInProgress": "ns=2;s=OutputShaft_OP3200.63518.Rec_en_cours",
+        "readingFinished": "ns=2;s=OutputShaft_OP3200.63518.Rec_termine",
+        "bypass": "ns=2;s=OutputShaft_OP3200.63518.Bypass",
+        "ftg": "ns=2;s=OutputShaft_OP3200.63518.FTG",
+        "gar": "ns=2;s=OutputShaft_OP3200.63518.GAR",
+        "nio": "ns=2;s=OutputShaft_OP3200.63518.NIO",
+        "dmc": "ns=2;s=OutputShaft_OP3200.63518.Datamatrix",
+        "badPiece": "ns=2;s=OutputShaft_OP3200.63518.Pce_Bad",
+        "goodPiece": "ns=2;s=OutputShaft_OP3200.63518.Pce_Good",
+        "timeout_Plc_Mes": "ns=2;s=OutputShaft_OP3200.63518.Timeout_PLC_MES",
+        "time_delay": "ns=2;s=OutputShaft_OP3200.63518.Time_delay",
+        "raz_te": "ns=2;s=OutputShaft_OP3200.63518.RAZ_TE",
+        "raz_dde": "ns=2;s=OutputShaft_OP3200.63518.RAZ_DDE"
+      }
+    }
+  }
+}

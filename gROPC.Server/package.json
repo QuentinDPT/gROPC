@@ -1,0 +1,29 @@
+{
+  "name": "g-ropc.server",
+  "version": "0.0.0",
+  "description": "gROPC.Server",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.14",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.3.2",
+    "@grpc/proto-loader": "^0.6.2",
+    "@types/config": "0.0.36",
+    "@types/nodemailer": "^6.4.0",
+    "@types/nodemailer-smtp-transport": "^2.7.4",
+    "config": "^3.3.2",
+    "grpc": "^1.24.10",
+    "node-opcua": "^2.21.0",
+    "node-windows": "^1.0.0-beta.5",
+    "nodemailer": "^6.4.16"
+  }
+}

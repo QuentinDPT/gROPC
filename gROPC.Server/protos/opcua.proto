@@ -1,0 +1,38 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "gROPC.gRPC";
+
+package OPCUA;
+
+// The greeting service definition.
+service OPCUAServices {
+  // Sends a greeting
+  rpc ReadValue (ReadValueRequest) returns (ReadValueResult) {}
+  rpc SubscribeValue (SubscribeValueRequest) returns (stream SubscribeValueResponse) {}
+  rpc UnsubscribeValue (UnsibscribeValueRequest) returns (UnsibscribeValueResponse) {}
+}
+
+message ReadValueRequest {
+	string nodeValue = 1;
+}
+
+message ReadValueResult {
+	string response = 1;
+}
+
+message SubscribeValueRequest {
+	string nodeValue = 1;
+}
+
+message SubscribeValueResponse {
+	int32 subsciptionId = 1;
+	string response = 2;
+}
+
+message UnsibscribeValueRequest {
+	int32 subscriptionId = 1;
+}
+
+message UnsibscribeValueResponse {
+
+}
