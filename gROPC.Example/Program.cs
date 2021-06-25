@@ -37,10 +37,15 @@ namespace gROPC.Example
 
             Console.WriteLine("Complete");
 
-            System.Threading.Thread.Sleep(15000);
+            System.Threading.Thread.Sleep(3000);
 
             Console.WriteLine("Part 2.2\t Unsubscription");
             unsubscribe_to_a_value(subID);
+
+            Console.WriteLine("Complete");
+
+            Console.WriteLine("Part 3  \t Write");
+            write_a_value();
 
             Console.WriteLine("Complete");
         }
@@ -81,6 +86,13 @@ namespace gROPC.Example
             OPCService.Unsubscribe(subscriptionId);
         }
 
+
+        static void write_a_value()
+        {
+            Console.WriteLine(" > Write a value " + OPCValue);
+
+            OPCService.Write(OPCValue, 666);
+        }
 
         /// <summary>
         /// Function launched each time we have a new value from OPC server

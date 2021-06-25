@@ -95,5 +95,86 @@ namespace gROPC
                 SubscriptionId = value
             });
         }
+
+        public void Write<T>(string nodeValue, T value)
+        {
+            switch (value)
+            {
+                case int i:
+                    _writeInt(nodeValue, i) ;
+                    return;
+                case double d:
+                    _writeDouble(nodeValue, d);
+                    return;
+                case bool b:
+                    _writeBool(nodeValue, b);
+                    return;
+                case string s:
+                    _writeString(nodeValue, s);
+                    return;
+                default:
+                    throw new Exception("unsupported type");
+            }
+        }
+
+        private void _writeString(string nodeValue, string _value)
+        {
+            var response = this._client.WriteValue(new gRPC.WriteValueRequest
+            {
+                NodeValue = nodeValue,
+                Value = _value,
+                Type = "string"
+            }).Response;
+
+            if(response != "OK")
+            {
+                throw new Exception(response);
+            }
+        }
+
+        private void _writeInt(string nodeValue, int _value)
+        {
+            var response = this._client.WriteValue(new gRPC.WriteValueRequest
+            {
+                NodeValue = nodeValue,
+                Value = _value.ToString(),
+                Type = "int"
+            }).Response;
+
+            if (response != "OK")
+            {
+                throw new Exception(response);
+            }
+        }
+
+        private void _writeDouble(string nodeValue, double _value)
+        {
+            var response = this._client.WriteValue(new gRPC.WriteValueRequest
+            {
+                NodeValue = nodeValue,
+                Value = _value.ToString(),
+                Type = "double"
+            }).Response;
+
+            if (response != "OK")
+            {
+                throw new Exception(response);
+            }
+        }
+
+        private void _writeBool(string nodeValue, bool _value)
+        {
+            var response = this._client.WriteValue(new gRPC.WriteValueRequest
+            {
+                NodeValue = nodeValue,
+                Value = _value.ToString(),
+                Type = "bool"
+            }).Response;
+
+            if (response != "OK")
+            {
+                throw new Exception(response);
+            }
+        }
     }
 }

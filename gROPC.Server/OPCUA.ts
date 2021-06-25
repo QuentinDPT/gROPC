@@ -9,9 +9,12 @@ import {
     ReadValueId,
     ReadValueIdOptions,
     ClientMonitoredItem,
-    DataValue
+    DataValue,
+    Variant,
+    DataType
 } from "node-opcua";
 
+let ___OPCUA_WHITELIST: string[] = [];
 
 module.exports = {
     OPCUA:
@@ -114,6 +117,48 @@ module.exports = {
                     return val.subscriptionId != subscriptionId;
                 });
             }
-        }
 
+            public writeValue(nodeName: string, value: string, type: string) {
+
+                let upperNodeName = nodeName.toUpperCase();
+                if (___OPCUA_WHITELIST.findIndex(x => x == upperNodeName) == -1)
+                    return "NOK";
+
+                let readInProgressData: Variant = null;
+
+                switch (type) {
+                    case "string":
+                        readInProgressData = {
+                            dataType: DataType.String,
+                            value: value
+                        } as Variant;
+                        break;
+                    case "double":
+                        readInProgressData = {
+                            dataType: DataType.Double,
+                            value: value
+                        } as Variant;
+                        break;
+                    case "bool":
+                        readInProgressData = {
+                            dataType: DataType.Boolean,
+                            value: value
+                        } as Variant;
+                        break;
+                    case "int":
+                        readInProgressData = {
+                            dataType: DataType.Int16,
+                            value: parseInt(value)
+                        } as Variant;
+                        break;
+                    default:
+                        return "NOK";
+                }
+
+                this._session.writeSingleNode(nodeName, readInProgressData);
+
+                return "OK";
+            }
+        },
+    OPCUA_whitelist: ___OPCUA_WHITELIST
 }

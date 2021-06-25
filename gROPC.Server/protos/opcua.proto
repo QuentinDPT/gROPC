@@ -10,6 +10,7 @@ service OPCUAServices {
   rpc ReadValue (ReadValueRequest) returns (ReadValueResult) {}
   rpc SubscribeValue (SubscribeValueRequest) returns (stream SubscribeValueResponse) {}
   rpc UnsubscribeValue (UnsibscribeValueRequest) returns (UnsibscribeValueResponse) {}
+  rpc WriteValue(WriteValueRequest) returns (WriteValueResponse) {}
 }
 
 message ReadValueRequest {
@@ -35,4 +36,14 @@ message UnsibscribeValueRequest {
 
 message UnsibscribeValueResponse {
 
+}
+
+message WriteValueRequest {
+	string nodeValue = 1;
+	string value = 2;
+	string type = 3;
+}
+
+message WriteValueResponse {
+	string response = 1;
 }

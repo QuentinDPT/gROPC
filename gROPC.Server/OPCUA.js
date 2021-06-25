@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_opcua_1 = require("node-opcua");
+let ___OPCUA_WHITELIST = [];
 module.exports = {
     OPCUA: class OPCUA {
         constructor(endpoint) {
@@ -88,6 +89,43 @@ module.exports = {
                 });
             });
         }
-    }
+        writeValue(nodeName, value, type) {
+            let upperNodeName = nodeName.toUpperCase();
+            if (___OPCUA_WHITELIST.findIndex(x => x == upperNodeName) == -1)
+                return "NOK";
+            let readInProgressData = null;
+            switch (type) {
+                case "string":
+                    readInProgressData = {
+                        dataType: node_opcua_1.DataType.String,
+                        value: value
+                    };
+                    break;
+                case "double":
+                    readInProgressData = {
+                        dataType: node_opcua_1.DataType.Double,
+                        value: value
+                    };
+                    break;
+                case "bool":
+                    readInProgressData = {
+                        dataType: node_opcua_1.DataType.Boolean,
+                        value: value
+                    };
+                    break;
+                case "int":
+                    readInProgressData = {
+                        dataType: node_opcua_1.DataType.Int16,
+                        value: parseInt(value)
+                    };
+                    break;
+                default:
+                    return "NOK";
+            }
+            this._session.writeSingleNode(nodeName, readInProgressData);
+            return "OK";
+        }
+    },
+    OPCUA_whitelist: ___OPCUA_WHITELIST
 };
 //# sourceMappingURL=OPCUA.js.map

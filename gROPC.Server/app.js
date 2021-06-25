@@ -16,6 +16,10 @@ var protoLoader = require('@grpc/proto-loader');
 var PROTO_PATH = __dirname + "/protos/opcua.proto";
 var serverURL = config.get("client.ip") + ":" + config.get("client.port");
 var OPCURL = "opc.tcp://localhost:49320";
+var writeWhiteList = config.get("whitelist");
+for (var n of writeWhiteList) {
+    OPCUA.OPCUA_whitelist.push(n.toUpperCase());
+}
 var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
     longs: String,
@@ -68,6 +72,13 @@ function _unsubscribeValue(call, callback) {
         callback(null, null);
     });
 }
+function _writeValue(call, callback) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("write value");
+        var rezz = OPC.writeValue(call.request.nodeValue, call.request.value, call.request.type);
+        callback(null, { response: rezz });
+    });
+}
 /**
  * Starts an RPC server that receives requests for the Greeter service at the
  * sample server port
@@ -81,7 +92,8 @@ function main() {
         server.addService(opcuaProto.OPCUAServices.service, {
             readValue: _readValue,
             subscribeValue: _subscribeValue,
-            unsubscribeValue: _unsubscribeValue
+            unsubscribeValue: _unsubscribeValue,
+            writeValue: _writeValue
         });
         server.bindAsync('0.0.0.0:50000', grpc.ServerCredentials.createInsecure(), () => {
             server.start();

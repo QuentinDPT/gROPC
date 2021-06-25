@@ -51,6 +51,8 @@ namespace gROPC.gRPC {
     static readonly grpc::Marshaller<global::gROPC.gRPC.SubscribeValueResponse> __Marshaller_OPCUA_SubscribeValueResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::gROPC.gRPC.SubscribeValueResponse.Parser));
     static readonly grpc::Marshaller<global::gROPC.gRPC.UnsibscribeValueRequest> __Marshaller_OPCUA_UnsibscribeValueRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::gROPC.gRPC.UnsibscribeValueRequest.Parser));
     static readonly grpc::Marshaller<global::gROPC.gRPC.UnsibscribeValueResponse> __Marshaller_OPCUA_UnsibscribeValueResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::gROPC.gRPC.UnsibscribeValueResponse.Parser));
+    static readonly grpc::Marshaller<global::gROPC.gRPC.WriteValueRequest> __Marshaller_OPCUA_WriteValueRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::gROPC.gRPC.WriteValueRequest.Parser));
+    static readonly grpc::Marshaller<global::gROPC.gRPC.WriteValueResponse> __Marshaller_OPCUA_WriteValueResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::gROPC.gRPC.WriteValueResponse.Parser));
 
     static readonly grpc::Method<global::gROPC.gRPC.ReadValueRequest, global::gROPC.gRPC.ReadValueResult> __Method_ReadValue = new grpc::Method<global::gROPC.gRPC.ReadValueRequest, global::gROPC.gRPC.ReadValueResult>(
         grpc::MethodType.Unary,
@@ -72,6 +74,13 @@ namespace gROPC.gRPC {
         "UnsubscribeValue",
         __Marshaller_OPCUA_UnsibscribeValueRequest,
         __Marshaller_OPCUA_UnsibscribeValueResponse);
+
+    static readonly grpc::Method<global::gROPC.gRPC.WriteValueRequest, global::gROPC.gRPC.WriteValueResponse> __Method_WriteValue = new grpc::Method<global::gROPC.gRPC.WriteValueRequest, global::gROPC.gRPC.WriteValueResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "WriteValue",
+        __Marshaller_OPCUA_WriteValueRequest,
+        __Marshaller_OPCUA_WriteValueResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -169,6 +178,22 @@ namespace gROPC.gRPC {
       public virtual grpc::AsyncUnaryCall<global::gROPC.gRPC.UnsibscribeValueResponse> UnsubscribeValueAsync(global::gROPC.gRPC.UnsibscribeValueRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_UnsubscribeValue, null, options, request);
+      }
+      public virtual global::gROPC.gRPC.WriteValueResponse WriteValue(global::gROPC.gRPC.WriteValueRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return WriteValue(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual global::gROPC.gRPC.WriteValueResponse WriteValue(global::gROPC.gRPC.WriteValueRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_WriteValue, null, options, request);
+      }
+      public virtual grpc::AsyncUnaryCall<global::gROPC.gRPC.WriteValueResponse> WriteValueAsync(global::gROPC.gRPC.WriteValueRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return WriteValueAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual grpc::AsyncUnaryCall<global::gROPC.gRPC.WriteValueResponse> WriteValueAsync(global::gROPC.gRPC.WriteValueRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_WriteValue, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override OPCUAServicesClient NewInstance(ClientBaseConfiguration configuration)

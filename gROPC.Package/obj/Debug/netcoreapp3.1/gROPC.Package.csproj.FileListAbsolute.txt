@@ -1,9 +1,8 @@
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.deps.json
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.dll
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.pdb
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.csprojAssemblyReference.cache
 C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.AssemblyInfoInputs.cache
 C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.AssemblyInfo.cs
 C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.csproj.CoreCompileInputs.cache
+C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.deps.json
+C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.dll
+C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\bin\Debug\netcoreapp3.1\gROPC.Package.pdb
 C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.dll
 C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Package\obj\Debug\netcoreapp3.1\gROPC.Package.pdb
