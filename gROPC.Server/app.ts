@@ -1,9 +1,25 @@
 import * as config from "config";
 import _ = require("lodash");
 
+const winston = require('winston');
 var OPCUA = require("./OPCUA");
 var grpc = require("@grpc/grpc-js");
 var protoLoader = require('@grpc/proto-loader');
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'gROPC' },
+    transports: [
+        //
+        // - Write all logs with level `error` and below to `error.log`
+        // - Write all logs with level `info` and below to `combined.log`
+        //
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' }),
+        new winston.transports.Console()
+    ],
+});
 
 var PROTO_PATH = __dirname + "/protos/opcua.proto";
 
@@ -27,6 +43,7 @@ var packageDefinition = protoLoader.loadSync(
 var opcuaProto = grpc.loadPackageDefinition(packageDefinition).OPCUA;
 
 var OPC = new OPCUA.OPCUA(OPCURL);
+OPC._logger = logger;
 
 
 async function _readValue(call, callback) {
@@ -50,7 +67,7 @@ async function _subscribeValue(call, callback) {
         });
     });
 
-    console.log("new subscription " + subid + " (gRPC)");
+    logger.info("new subscription " + subid + " (gRPC)");
 
     call.write({
         subsciptionId: subid,
@@ -66,7 +83,7 @@ async function _subscribeValue(call, callback) {
 }
 
 async function _unsubscribeValue(call, callback) {
-    console.log("unsubscribe " + call.request.subscriptionId + " (gRPC)");
+    logger.info("unsubscribe " + call.request.subscriptionId + " (gRPC)");
 
     let th = valuesTracked.find(x => x.subscriptionID == call.request.subscriptionId);
 

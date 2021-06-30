@@ -30,6 +30,8 @@ module.exports = {
 
             public connected: boolean;
 
+            public _logger;
+
 
             public constructor(endpoint: string) {
                 const options = {
@@ -49,6 +51,8 @@ module.exports = {
                 this._client = OPCUAClient.create(options);
                 this._session = null;
                 this._subscriptions = [];
+
+                this._logger = console;
             }
 
             public async connect() {
@@ -73,12 +77,14 @@ module.exports = {
                     priority: 10
                 });
 
+                const __self = this;
+
                 subscription.on("started", function () {
-                    console.log("new subscription " + subscription.subscriptionId + " (OPCUA)");
+                    __self._logger.info("new subscription " + subscription.subscriptionId + " (OPCUA)");
                 }).on("keepalive", function () {
-                    console.log("keepalive " + subscription.subscriptionId + " (OPCUA)");
+                    __self._logger.info("keepalive " + subscription.subscriptionId + " (OPCUA)");
                 }).on("terminated", function () {
-                    console.log("terminated " + subscription.subscriptionId + " (OPCUA)");
+                    __self._logger.info("terminated " + subscription.subscriptionId + " (OPCUA)");
                 });
 
 
@@ -122,8 +128,10 @@ module.exports = {
             public writeValue(nodeName: string, value: string, type: string) {
 
                 let upperNodeName = nodeName.toUpperCase();
-                if (___OPCUA_WHITELIST.findIndex(x => x == upperNodeName) == -1)
+                if (___OPCUA_WHITELIST.findIndex(x => x == upperNodeName) == -1) {
+                    this._logger.error("non whitelisted node value : " + value + " (OPCUA > Write)");
                     return "NOK";
+                }
 
                 let readInProgressData: Variant = null;
 
@@ -153,6 +161,7 @@ module.exports = {
                         } as Variant;
                         break;
                     default:
+                        this._logger.error("unknown variable type (OPCUA > Write)");
                         return "NOK";
                 }
 
