@@ -68,7 +68,7 @@ namespace gROPC.Example
         {
             Console.WriteLine(" > Subscribe to " + OPCValue);
 
-            var id = OPCService.SubscribeAsync(OPCValue, onRecieve);
+            var id = OPCService.SubscribeAsync(OPCValue, (x) => Console.WriteLine("> " + x)); ;
 
             Console.WriteLine(" > (id) " + id);
 

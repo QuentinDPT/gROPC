@@ -1,23 +1,31 @@
 import * as config from "config";
 import _ = require("lodash");
 
-const winston = require('winston');
+const { createLogger, format, transports } = require('winston');
 var OPCUA = require("./OPCUA");
 var grpc = require("@grpc/grpc-js");
 var protoLoader = require('@grpc/proto-loader');
+const { combine, timestamp, label, printf } = format;
 
-const logger = winston.createLogger({
+const myFormat = printf(({ level, message, service, timestamp }) => {
+    return `${timestamp} [${service}] ${level}: ${message}`;
+});
+
+const logger = createLogger({
     level: 'info',
-    format: winston.format.json(),
+    format: combine(
+        timestamp(),
+        myFormat
+    ),
     defaultMeta: { service: 'gROPC' },
     transports: [
         //
         // - Write all logs with level `error` and below to `error.log`
         // - Write all logs with level `info` and below to `combined.log`
         //
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' }),
-        new winston.transports.Console()
+        new transports.File({ filename: 'error.log', level: 'error' }),
+        new transports.File({ filename: 'combined.log' }),
+        new transports.Console()
     ],
 });
 

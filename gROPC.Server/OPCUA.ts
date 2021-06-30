@@ -77,14 +77,17 @@ module.exports = {
                     priority: 10
                 });
 
+                let subID = 0;
+
                 const __self = this;
 
                 subscription.on("started", function () {
                     __self._logger.info("new subscription " + subscription.subscriptionId + " (OPCUA)");
+                    subID = subscription.subscriptionId;
                 }).on("keepalive", function () {
                     __self._logger.info("keepalive " + subscription.subscriptionId + " (OPCUA)");
                 }).on("terminated", function () {
-                    __self._logger.info("terminated " + subscription.subscriptionId + " (OPCUA)");
+                    __self._logger.info("terminated " + subID + " (OPCUA)");
                 });
 
 
