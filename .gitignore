@@ -287,6 +287,9 @@ _Pvt_Extensions
 # Paket dependency manager
 .paket/paket.exe
 paket-files/
+#App
+/gROPC.Server/app.js*
+/gROPC.Server/OPCUA.js*
 
 # FAKE - F# Make
 .fake/
