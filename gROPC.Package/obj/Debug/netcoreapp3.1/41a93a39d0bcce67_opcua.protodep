@@ -1,2 +1,0 @@
-obj\Debug\netcoreapp3.1/Opcua.cs \
-obj\Debug\netcoreapp3.1/OpcuaGrpc.cs: ../gROPC.Server/protos/opcua.proto

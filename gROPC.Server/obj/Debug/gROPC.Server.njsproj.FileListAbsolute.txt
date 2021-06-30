@@ -1,2 +1,0 @@
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Server\obj\Debug\gROPC.Server.njsproj.CoreCompileInputs.cache
-C:\Users\YP9NSS\Documents\Dev\gROPC\gROPC.Server\bin\Microsoft.NodejsTools.WebRole.dll

@@ -77,7 +77,7 @@ namespace gROPC
                 while (await result.ResponseStream.MoveNext())
                 {
                     gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
-                    if(id == feature.SubsciptionId)
+                    if (id == feature.SubsciptionId)
                         callbackFunction(feature.Response);
 
                     id = feature.SubsciptionId;
