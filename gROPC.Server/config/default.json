@@ -1,9 +1,10 @@
 {
-  "client": {
-    //"ip": "121.128.80.14",
-    "ip": "localhost",
-    //"ip": "0.0.0.0",
+  "server": {
+    "ip": "0.0.0.0",
     "port": 50000
+  },
+  "OPC": {
+    "url": "opc.tcp://localhost:49320"
   },
   "whitelist": [
     "ns=2;s=Channel1.Device1.TEST"

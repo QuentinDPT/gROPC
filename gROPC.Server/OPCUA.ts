@@ -9,7 +9,8 @@ import {
     ReadValueId,
     ReadValueIdOptions,
     ClientMonitoredItem,
-    DataValue,
+    DataValue,
+
     Variant,
     DataType
 } from "node-opcua";
@@ -73,11 +74,11 @@ module.exports = {
                 });
 
                 subscription.on("started", function () {
-                    console.log("subscription started - subscriptionId=", subscription.subscriptionId);
+                    console.log("new subscription " + subscription.subscriptionId + " (OPCUA)");
                 }).on("keepalive", function () {
-                    console.log("keepalive");
+                    console.log("keepalive " + subscription.subscriptionId + " (OPCUA)");
                 }).on("terminated", function () {
-                    console.log("terminated");
+                    console.log("terminated " + subscription.subscriptionId + " (OPCUA)");
                 });
 
 
@@ -108,7 +109,7 @@ module.exports = {
             }
 
             public async unsubscribeValue(subscriptionId: number) {
-                var observation = this._subscriptions.find(x => x.subscriptionId == subscriptionId);
+                let observation = this._subscriptions.find(x => x.subscriptionId == subscriptionId);
                 if (observation == null) {
                     return;
                 }

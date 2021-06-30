@@ -54,11 +54,11 @@ module.exports = {
                     priority: 10
                 });
                 subscription.on("started", function () {
-                    console.log("subscription started - subscriptionId=", subscription.subscriptionId);
+                    console.log("new subscription " + subscription.subscriptionId + " (OPCUA)");
                 }).on("keepalive", function () {
-                    console.log("keepalive");
+                    console.log("keepalive " + subscription.subscriptionId + " (OPCUA)");
                 }).on("terminated", function () {
-                    console.log("terminated");
+                    console.log("terminated " + subscription.subscriptionId + " (OPCUA)");
                 });
                 const itemToMonitor = {
                     nodeId: nodeName,
@@ -79,7 +79,7 @@ module.exports = {
         }
         unsubscribeValue(subscriptionId) {
             return __awaiter(this, void 0, void 0, function* () {
-                var observation = this._subscriptions.find(x => x.subscriptionId == subscriptionId);
+                let observation = this._subscriptions.find(x => x.subscriptionId == subscriptionId);
                 if (observation == null) {
                     return;
                 }
