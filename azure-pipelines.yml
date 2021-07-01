@@ -22,7 +22,7 @@ steps:
   inputs:
     command: 'build'
     arguments: '--configuration $(buildConfiguration)'
-    projects: 'gROPC.Server/gROPC.Server.csproj'
+    projects: 'gROPC.Package/gROPC.Package.csproj'
 
 # The second task is dotnet pack command again pointing to the csproj file
 # The nobuild means the project will not be compiled before running pack, because its already built in above step
@@ -30,7 +30,7 @@ steps:
   displayName: "dotnet pack"
   inputs:
     command: 'pack'
-    packagesToPack: 'gROPC.Server/gROPC.Server.csproj'
+    packagesToPack: 'gROPC.Package/gROPC.Package.csproj'
     nobuild: true
     versioningScheme: 'byPrereleaseNumber'
     majorVersion: '1'
