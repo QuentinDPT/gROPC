@@ -107,7 +107,7 @@ async function _unsubscribeValue(call, callback) {
 }
 
 async function _writeValue(call, callback) {
-    let result = OPC.writeValue(call.request.nodeValue, call.request.value, call.request.type);
+    let result = await OPC.writeValue(call.request.nodeValue, call.request.value, call.request.type);
 
     callback(null, { response: result });
 }

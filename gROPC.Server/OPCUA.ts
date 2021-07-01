@@ -28,9 +28,13 @@ module.exports = {
 
             private _subscriptions: ClientSubscription[];
 
+            private _nodeValuesTypes = [];
+
             public connected: boolean;
 
             public _logger;
+            
+
 
 
             public constructor(endpoint: string) {
@@ -128,44 +132,73 @@ module.exports = {
                 });
             }
 
-            public writeValue(nodeName: string, value: string, type: string) {
+            public async writeValue(nodeName: string, value: string, type: string) {
 
                 let upperNodeName = nodeName.toUpperCase();
                 if (___OPCUA_WHITELIST.findIndex(x => x == upperNodeName) == -1) {
                     this._logger.error("non whitelisted node value : " + value + " (OPCUA > Write)");
-                    return "NOK";
+                    return "UNAUTHORIZED";
                 }
 
                 let readInProgressData: Variant = null;
 
+                let typesCache = this._nodeValuesTypes.find(x => x.node == nodeName);
+
+                if (typesCache == null) {
+                    const dataValue = await this._session.readVariableValue(nodeName);
+
+                    typesCache = { "node": nodeName, "type": dataValue.value.dataType};
+                    this._nodeValuesTypes.push(typesCache);
+                }
+
                 switch (type) {
                     case "string":
+                        if (typesCache.type != DataType.String) {
+                            this._logger.error("wrong type : " + value + " (OPCUA > Write)");
+                            return "WRONG_TYPE";
+                        }
                         readInProgressData = {
-                            dataType: DataType.String,
+                            dataType: typesCache.type,
                             value: value
                         } as Variant;
                         break;
                     case "double":
+                        if (typesCache.type != DataType.Double && typesCache.type != DataType.Float) {
+                            this._logger.error("wrong type : " + value + " (OPCUA > Write)");
+                            return "WRONG_TYPE";
+                        }
                         readInProgressData = {
-                            dataType: DataType.Double,
+                            dataType: typesCache.type,
                             value: value
                         } as Variant;
                         break;
                     case "bool":
+                        if (typesCache.type != DataType.Boolean) {
+                            this._logger.error("wrong type : " + value + " (OPCUA > Write)");
+                            return "WRONG_TYPE";
+                        }
                         readInProgressData = {
-                            dataType: DataType.Boolean,
+                            dataType: typesCache.type,
                             value: value
                         } as Variant;
                         break;
                     case "int":
+                        if (
+                            typesCache.type != DataType.Int16  && typesCache.type != DataType.Int32  && typesCache.type != DataType.Int64  &&
+                            typesCache.type != DataType.UInt16 && typesCache.type != DataType.UInt32 && typesCache.type != DataType.UInt64
+                           )
+                        {
+                            this._logger.error("wrong type : " + value + " (OPCUA > Write)");
+                            return "WRONG_TYPE";
+                        }
                         readInProgressData = {
-                            dataType: DataType.Int16,
+                            dataType: typesCache.type,
                             value: parseInt(value)
                         } as Variant;
                         break;
                     default:
                         this._logger.error("unknown variable type (OPCUA > Write)");
-                        return "NOK";
+                        return "UNKNOWN_TYPE";
                 }
 
                 this._session.writeSingleNode(nodeName, readInProgressData);
