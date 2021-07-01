@@ -2,13 +2,12 @@
 using Grpc.Net.Client;
 using System;
 using System.Collections.Generic;
+using gROPC.Package.Exceptions;
 
 namespace gROPC
 {
     public class gROPCService
     {
-        private List<int> _subscriptions;
-
         private gROPC.gRPC.OPCUAServices.OPCUAServicesClient _client;
 
         private string _serverURL;
@@ -106,6 +105,9 @@ namespace gROPC
                 case double d:
                     _writeDouble(nodeValue, d);
                     return;
+                case float d:
+                    _writeDouble(nodeValue, d);
+                    return;
                 case bool b:
                     _writeBool(nodeValue, b);
                     return;
@@ -113,7 +115,7 @@ namespace gROPC
                     _writeString(nodeValue, s);
                     return;
                 default:
-                    throw new Exception("unsupported type");
+                    throw new OPCUnsupportedType(value.GetType().Name);
             }
         }
 
@@ -126,9 +128,22 @@ namespace gROPC
                 Type = "string"
             }).Response;
 
-            if(response != "OK")
+            switch (response)
             {
-                throw new Exception(response);
+                case "OK":
+                    break;
+                case "UNAUTHORIZED":
+                    throw new OPCUnauthorizedOperation(response);
+                    break;
+                case "WRONG_TYPE":
+                    throw new OPCWrongType(response);
+                    break;
+                case "UNKNOWN_TYPE":
+                    throw new OPCUnknownType(response);
+                    break;
+                default:
+                    throw new Exception("Unknown exception: something went wrong");
+                    break;
             }
         }
 
@@ -141,9 +156,22 @@ namespace gROPC
                 Type = "int"
             }).Response;
 
-            if (response != "OK")
+            switch (response)
             {
-                throw new Exception(response);
+                case "OK":
+                    break;
+                case "UNAUTHORIZED":
+                    throw new OPCUnauthorizedOperation(response);
+                    break;
+                case "WRONG_TYPE":
+                    throw new OPCWrongType(response);
+                    break;
+                case "UNKNOWN_TYPE":
+                    throw new OPCUnknownType(response);
+                    break;
+                default:
+                    throw new Exception("Unknown exception: something went wrong");
+                    break;
             }
         }
 
@@ -156,9 +184,22 @@ namespace gROPC
                 Type = "double"
             }).Response;
 
-            if (response != "OK")
+            switch (response)
             {
-                throw new Exception(response);
+                case "OK":
+                    break;
+                case "UNAUTHORIZED":
+                    throw new OPCUnauthorizedOperation(response);
+                    break;
+                case "WRONG_TYPE":
+                    throw new OPCWrongType(response);
+                    break;
+                case "UNKNOWN_TYPE":
+                    throw new OPCUnknownType(response);
+                    break;
+                default:
+                    throw new Exception("Unknown exception: something went wrong");
+                    break;
             }
         }
 
@@ -171,9 +212,22 @@ namespace gROPC
                 Type = "bool"
             }).Response;
 
-            if (response != "OK")
+            switch (response)
             {
-                throw new Exception(response);
+                case "OK":
+                    break;
+                case "UNAUTHORIZED":
+                    throw new OPCUnauthorizedOperation(response);
+                    break;
+                case "WRONG_TYPE":
+                    throw new OPCWrongType(response);
+                    break;
+                case "UNKNOWN_TYPE":
+                    throw new OPCUnknownType(response);
+                    break;
+                default:
+                    throw new Exception("Unknown exception: something went wrong");
+                    break;
             }
         }
     }
