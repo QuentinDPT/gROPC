@@ -8,7 +8,7 @@ namespace gROPC.Package
 {
     public class gROPCSubscription<T> where T : IConvertible
     {
-        private int _GUID;
+        private string _GUID;
         public string GUID {
             get { return _GUID.ToString(); }
             set { }

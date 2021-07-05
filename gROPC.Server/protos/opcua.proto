@@ -26,12 +26,12 @@ message SubscribeValueRequest {
 }
 
 message SubscribeValueResponse {
-	int32 subsciptionId = 1;
+	string subsciptionId = 1;
 	string response = 2;
 }
 
 message UnsibscribeValueRequest {
-	int32 subscriptionId = 1;
+	string subscriptionId = 1;
 }
 
 message UnsibscribeValueResponse {

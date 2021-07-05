@@ -1,5 +1,6 @@
 import * as config from "config";
 import _ = require("lodash");
+import { v4 as uuidv4 } from 'uuid';
 
 const { createLogger, format, transports } = require('winston');
 var OPCUA = require("./OPCUA");
@@ -60,13 +61,15 @@ async function _readValue(call, callback) {
     callback(null, { response: result });
 }
 
-var observerID = 1;
-
 var valuesTracked = [];
 
 
 async function _subscribeValue(call, callback) {
-    let subid = observerID++;
+    let subid = "";
+
+    do {
+        subid = uuidv4();
+    } while (valuesTracked.find(x => x.subscriptionID == subid) != null);
 
     let _opcenv = await OPC.subscribeValue(call.request.nodeValue, function (result) {
         call.write({
