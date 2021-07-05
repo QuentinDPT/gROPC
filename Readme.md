@@ -9,14 +9,20 @@ Pour la partie client, il faudra renseigner l'addresse ainsi que le port du serv
 
 ## Procédures
 
-### Abonnements
+### Lecture
 
-Lorsque le client souhaite s'abonner à une valeur de l'OPC, il lui sera donné un identifiant de thread serveur gROPC pour qu'il puisse l'interrompre.
-Pour interrompre un abonnement, il suffit de donner l'identifiant à la methode unsubscribe.
+Pour pouvoir lire une valeur OPC :
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `Attention, il n'y a pas de verification lors d'une demande d'unsubscribe. il es possible d'arrêter un abonnement d'un autre client`
+``` C++
+// prérequis
+var OPCService = new gROPCService(serverURL);
 
-Les identificatns client/server d'abonnement, ne correspondent pas à l'identifiant de l'abonnement OPC.
+// fonction
+public static string read_a_value(gROPCService OPCService, string OPCValue){
+    string resultat = OPCService.Read(OPCValue);
+    return resultat;
+}
+```
 
 ### Ecriture
 
@@ -25,10 +31,57 @@ pour cela il faut aller dans les paramètres de l'application gROPC serveur et d
 
 Si la valeur ne peut pas être lue pour une raison de droits, une erreur sera envoyé au client suite à une réponse "NOK" de la part du serveur.
 
+``` C++
+// prérequis
+var OPCService = new gROPCService(serverURL);
 
+// fonction
+public static void write_a_value<T>(gROPCService OPCService, string OPCValue, T value){
+    OPCService.Write(OPCValue, value);
+}
+```
+
+> Les types implémentés sont `int`, `double`, `float`, `bool`, `string`. Si vous devez utiliser un autre type, vous aurez une exception `OPCUnsupportedType`
+
+> Pour corriger cette erreur, il faudra modifier le package ainsi que le serveur pour qu'ili puisse correctement interprêter le nouveau type.
+
+### Abonnements
+
+Lorsque le client souhaite s'abonner à une valeur de l'OPC, il lui sera donné un objet gROPCSubscription associé à un thread serveur gROPC pour qu'il puisse l'interrompre.
+Pour interrompre un abonnement, il suffit de demander à l'objet de se desabonner.
+
+Les identificatns client/server d'abonnement, ne correspondent pas à l'identifiant de l'abonnement OPC.
+
+```C++
+// prérequis
+var OPCService = new gROPCService(serverURL);
+
+// fonction
+public static gROPCSubscription subscribe_to_a_value(gROPCService OPCService, string OPCValue){
+    var subscription = OPCService.Subscribe<int>(OPCValue);
+    subscription.onChangeValue += ma_fonction;
+    return subscription.Subscribe();
+}
+
+// fonction d'evenement
+public static void ma_fonction(object sender, int valeur){
+    Console.WriteLine("Nouvelle valeur : " + valeur);
+}
+```
+
+### Désabonements
+
+```C++
+// prérequis
+var OPCService = new gROPCService(serverURL);
+var subscription = OPCService.Subscribe<int>(OPCValue);
+
+// fonction
+public static void unsubscribe_to_a_value(gROPCSubscription subscription){
+    subscription.Unsubscribe();
+}
+```
 
 ## Améliorations
-
- - donner des GUID aux client pour ne plus avoir de problèmes d'identifiants qui se suivent (trop simple pour arrêter d'aurtes clients),
- - associer chaque identifiants à un client pour eviter de fermer un abonnement qui n'appartien pas au bon client,
- - en savoir plus sur le comportement de l'ensemble applicatif en cas de perte de connection.
+ - Bind générique sur la methode Read
+ - Reconnection automatique lors d'une perte de connection.
