@@ -85,6 +85,7 @@ async function _subscribeValue(call, callback) {
     valuesTracked.push({
         nodeValue: call.request.nodeValue,
         subscriptionID: subid,
+        clientEndpoint: call.getPeer(),
         thread: call,
         opcenv: _opcenv
     });
@@ -96,6 +97,9 @@ async function _unsubscribeValue(call, callback) {
     let th = valuesTracked.find(x => x.subscriptionID == call.request.subscriptionId);
 
     if (th == null)
+        return;
+
+    if (th.clientEndpoint != call.getPeer())
         return;
 
     await OPC.unsubscribeValue(th.opcenv.subscriptionId);
