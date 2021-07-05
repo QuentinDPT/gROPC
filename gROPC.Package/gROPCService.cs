@@ -44,55 +44,21 @@ namespace gROPC
 
         public string Read(string value)
         {
-            return _client.ReadValue(new gRPC.ReadValueRequest
+            try
             {
-                NodeValue = value
-            }).Response;
-        }
-
-        public int SubscribeAsync(string value, Action<string> callbackFunction)
-        {
-            LastID = 0;
-
-            _subscribeAsync(value, callbackFunction);
-
-            while (LastID == 0)
-            {
-                System.Threading.Thread.Sleep(2);
-            };
-
-            return LastID;
-        }
-
-        private async System.Threading.Tasks.Task<int> _subscribeAsync(string value, Action<string> callbackFunction)
-        {
-            int id = 0;
-            using (var result = _client.SubscribeValue(new gRPC.SubscribeValueRequest
-            {
-                NodeValue = value
-            })
-                )
-            {
-                while (await result.ResponseStream.MoveNext())
+                return _client.ReadValue(new gRPC.ReadValueRequest
                 {
-                    gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
-                    if (id == feature.SubsciptionId)
-                        callbackFunction(feature.Response);
-
-                    id = feature.SubsciptionId;
-                    LastID = id;
-                }
+                    NodeValue = value
+                }).Response;
+            }catch(Exception ex)
+            {
+                throw new gRPCDisconnected("Cannot read, communication cannot be establiched");
             }
-
-            return id;
         }
 
-        public void Unsubscribe(int value)
+        public gROPC.Package.gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
         {
-            _client.UnsubscribeValue(new gRPC.UnsibscribeValueRequest
-            {
-                SubscriptionId = value
-            });
+            return new Package.gROPCSubscription<T>(this._client, nodeValue);
         }
 
         public void Write<T>(string nodeValue, T value)
@@ -100,19 +66,49 @@ namespace gROPC
             switch (value)
             {
                 case int i:
-                    _writeInt(nodeValue, i) ;
+                    try
+                    {
+                        _writeInt(nodeValue, i);
+                    }catch(Exception ex)
+                    {
+                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
+                    }
                     return;
                 case double d:
-                    _writeDouble(nodeValue, d);
+                    try
+                    {
+                        _writeDouble(nodeValue, d);
+                    }catch (Exception ex)
+                    {
+                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
+                    }
                     return;
                 case float d:
-                    _writeDouble(nodeValue, d);
+                    try
+                    {
+                        _writeDouble(nodeValue, d);
+                    }catch(Exception ex)
+                    {
+                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
+                    }
                     return;
                 case bool b:
-                    _writeBool(nodeValue, b);
+                    try
+                    {
+                        _writeBool(nodeValue, b);
+                    }catch (Exception ex)
+                    {
+                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
+                    }
                     return;
                 case string s:
-                    _writeString(nodeValue, s);
+                    try
+                    {
+                        _writeString(nodeValue, s);
+                    }catch (Exception ex)
+                    {
+                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
+                    }
                     return;
                 default:
                     throw new OPCUnsupportedType(value.GetType().Name);

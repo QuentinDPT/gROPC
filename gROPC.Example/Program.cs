@@ -33,14 +33,14 @@ namespace gROPC.Example
 
 
             Console.WriteLine("Part 2.1\t Subscription");
-            int subID = subscribe_to_a_value();
+            var sub = subscribe_to_a_value();
 
             Console.WriteLine("Complete");
 
             System.Threading.Thread.Sleep(3000);
 
             Console.WriteLine("Part 2.2\t Unsubscription");
-            unsubscribe_to_a_value(subID);
+            unsubscribe_to_a_value(sub);
 
             Console.WriteLine("Complete");
 
@@ -64,26 +64,26 @@ namespace gROPC.Example
         /// Subscribe to a value from the OPC server
         /// </summary>
         /// <returns>id of the subscription</returns>
-        static int subscribe_to_a_value()
+        static Package.gROPCSubscription<int> subscribe_to_a_value()
         {
             Console.WriteLine(" > Subscribe to " + OPCValue);
 
-            var id = OPCService.SubscribeAsync(OPCValue, (x) => Console.WriteLine("> " + x)); ;
+            var sub = OPCService.Subscribe<int>(OPCValue);
 
-            Console.WriteLine(" > (id) " + id);
+            sub.onChangeValue += onRecieve;
 
-            return id;
+            return sub.Subscribe();
         }
 
         /// <summary>
         /// Unsubscribe to a value from the OPC server
         /// </summary>
         /// <param name="subscriptionId">id of the subscription to stop</param>
-        static void unsubscribe_to_a_value(int subscriptionId)
+        static void unsubscribe_to_a_value(Package.gROPCSubscription<int> sub)
         {
-            Console.WriteLine(" > Unsubscribe to " + subscriptionId);
+            Console.WriteLine(" > Unsubscribe to " + sub.NodeValue);
 
-            OPCService.Unsubscribe(subscriptionId);
+            sub.Unsubscribe();
         }
 
 
@@ -98,7 +98,7 @@ namespace gROPC.Example
         /// Function launched each time we have a new value from OPC server
         /// </summary>
         /// <param name="value">value readed</param>
-        static void onRecieve(string value)
+        static void onRecieve(object sender, int value)
         {
             Console.WriteLine(" > Recieve a value : " + value);
         }
