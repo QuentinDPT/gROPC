@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>PPS.gROPC</AssemblyName>
+    <Authors>Quentin de POTTER</Authors>
+    <Company>Punch Powerglide Strasbourg</Company>
+    <Product>gROPC</Product>
+    <Description>Contact an OPC server via gRPC protocol</Description>
   </PropertyGroup>
 
   <ItemGroup>
