@@ -7,6 +7,7 @@
     <Company>Punch Powerglide Strasbourg</Company>
     <Product>gROPC</Product>
     <Description>Contact an OPC server via gRPC protocol</Description>
+    <PackageIcon>gROPC.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,13 @@
     <Protobuf Include="..\gROPC.Server\protos\opcua.proto" GrpcServices="Client">
       <Link>Protos\opcua.proto</Link>
     </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="gROPC.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
