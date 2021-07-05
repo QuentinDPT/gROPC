@@ -57,7 +57,7 @@ namespace gROPC.Example
         {
             Console.WriteLine(" > Read the value " + OPCValue);
 
-            Console.WriteLine(" > " + OPCService.Read(OPCValue));
+            Console.WriteLine(" > " + OPCService.Read<int>(OPCValue));
         }
 
         /// <summary>

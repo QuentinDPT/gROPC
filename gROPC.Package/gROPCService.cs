@@ -42,17 +42,41 @@ namespace gROPC
             _client = new gRPC.OPCUAServices.OPCUAServicesClient(channel);
         }
 
-        public string Read(string value)
+        public T Read<T>(string value) where T : IConvertible
         {
             try
             {
-                return _client.ReadValue(new gRPC.ReadValueRequest
+                return _convertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
                 {
                     NodeValue = value
-                }).Response;
+                }).Response);
             }catch(Exception ex)
             {
                 throw new gRPCDisconnected("Cannot read, communication cannot be establiched");
+            }
+        }
+
+        private static T _convertType<T>(string value) where T : IConvertible
+        {
+            switch (typeof(T))
+            {
+                case Type intType when intType == typeof(int):
+                    return (T)(object)int.Parse(value);
+
+                case Type intType when intType == typeof(double):
+                    return (T)(object)double.Parse(value);
+
+                case Type intType when intType == typeof(float):
+                    return (T)(object)float.Parse(value);
+
+                case Type intType when intType == typeof(bool):
+                    return (T)(object)bool.Parse(value);
+
+                case Type intType when intType == typeof(string):
+                    return (T)(object)value;
+
+                default:
+                    throw new OPCUnsupportedType(value.GetType().Name);
             }
         }
 
