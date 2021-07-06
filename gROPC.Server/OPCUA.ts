@@ -121,6 +121,7 @@ module.exports = {
                 return subscription;
             }
 
+            /// subscriptionId : ID of the OPC
             public async unsubscribeValue(subscriptionId: number) {
                 let observation = this._subscriptions.find(x => x.subscriptionId == subscriptionId);
                 if (observation == null) {

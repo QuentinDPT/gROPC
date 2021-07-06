@@ -71,11 +71,21 @@ async function _subscribeValue(call, callback) {
         subid = uuidv4();
     } while (valuesTracked.find(x => x.subscriptionID == subid) != null);
 
-    let _opcenv = await OPC.subscribeValue(call.request.nodeValue, function (result) {
-        call.write({
+    let stillOnline = true;
+    let _opcenv = await OPC.subscribeValue(call.request.nodeValue, async function (result) {
+        if (!stillOnline)
+            return;
+
+        stillOnline = call.write({
             subsciptionId: subid,
             response: result
         });
+
+        if (!stillOnline) {
+            let subId = _opcenv.subscriptionId;
+            logger.warn("client disconnected, close " + subId + " (OPCUA)");
+            await OPC.unsubscribeValue(subId);
+        }
     });
 
     logger.info("new subscription " + subid + " (gRPC)");
