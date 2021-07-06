@@ -8,11 +8,15 @@ namespace gROPC
 {
     public class gROPCService
     {
-        private gROPC.gRPC.OPCUAServices.OPCUAServicesClient _client;
+        private gRPC.OPCUAServices.OPCUAServicesClient _client;
 
         private string _serverURL;
 
         private Channel _channel;
+
+        private int _reconnectionTimeout;
+
+        private int _reconnectionMaxAttempts;
 
         public int LastID
         {
@@ -26,6 +30,15 @@ namespace gROPC
             _channel = new Channel(_serverURL, ChannelCredentials.Insecure);
 
             _client = new gRPC.OPCUAServices.OPCUAServicesClient(_channel);
+
+            _reconnectionMaxAttempts = -1;
+
+            _reconnectionTimeout = 1600;
+        }
+        public gROPCService(string serverURL, int serverPort, int reconnectionTimeout, int reconnectionMaxAttempts) : this(serverURL, serverPort)
+        {
+            _reconnectionTimeout = reconnectionTimeout;
+            _reconnectionMaxAttempts = reconnectionMaxAttempts;
         }
 
         ~gROPCService()
@@ -40,6 +53,10 @@ namespace gROPC
             Channel channel = new Channel(_serverURL, ChannelCredentials.Insecure);
 
             _client = new gRPC.OPCUAServices.OPCUAServicesClient(channel);
+
+            _reconnectionMaxAttempts = -1;
+
+            _reconnectionTimeout = 1600;
         }
 
         public T Read<T>(string value) where T : IConvertible
@@ -60,9 +77,9 @@ namespace gROPC
             }
         }
 
-        public gROPC.Package.gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
+        public gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
         {
-            return new Package.gROPCSubscription<T>(this._client, nodeValue);
+            return new gROPCSubscription<T>(this._client, nodeValue, _reconnectionTimeout, _reconnectionMaxAttempts);
         }
 
         public void Write<T>(string nodeValue, T value)

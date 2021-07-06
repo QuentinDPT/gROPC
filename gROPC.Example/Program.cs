@@ -27,7 +27,7 @@ namespace gROPC.Example
 
             // CRUD
             Console.WriteLine("Part 1  \t Read");
-            read_a_value();
+            //read_a_value();
 
             Console.WriteLine("Complete");
 
@@ -40,14 +40,15 @@ namespace gROPC.Example
             System.Threading.Thread.Sleep(3000);
 
             Console.WriteLine("Part 2.2\t Unsubscription");
-            unsubscribe_to_a_value(sub);
+            //unsubscribe_to_a_value(sub);
 
             Console.WriteLine("Complete");
 
             Console.WriteLine("Part 3  \t Write");
-            write_a_value();
+            //write_a_value();
 
             Console.WriteLine("Complete");
+            while (true) { }
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace gROPC.Example
         /// Subscribe to a value from the OPC server
         /// </summary>
         /// <returns>id of the subscription</returns>
-        static Package.gROPCSubscription<int> subscribe_to_a_value()
+        static gROPCSubscription<int> subscribe_to_a_value()
         {
             Console.WriteLine(" > Subscribe to " + OPCValue);
 
@@ -79,7 +80,7 @@ namespace gROPC.Example
         /// Unsubscribe to a value from the OPC server
         /// </summary>
         /// <param name="subscriptionId">id of the subscription to stop</param>
-        static void unsubscribe_to_a_value(Package.gROPCSubscription<int> sub)
+        static void unsubscribe_to_a_value(gROPCSubscription<int> sub)
         {
             Console.WriteLine(" > Unsubscribe to " + sub.NodeValue);
 
