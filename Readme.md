@@ -50,6 +50,8 @@ public static void write_a_value<T>(gROPCService OPCService, string OPCValue, T 
 Lorsque le client souhaite s'abonner à une valeur de l'OPC, il lui sera donné un objet gROPCSubscription associé à un thread serveur gROPC pour qu'il puisse l'interrompre.
 Pour interrompre un abonnement, il suffit de demander à l'objet de se desabonner.
 
+L'abonnement est la seule fonctionnalité qui gère pleinement la déconnection au serveur. Les autres fonctionnalités envoient une erreur pour signaler qu'elles n'ont pas pu s'executer correctement
+
 Les identifiants client/server d'abonnement, ne correspondent pas à l'identifiant de l'abonnement OPC.
 
 ```C++
@@ -89,12 +91,30 @@ public static void unsubscribe_to_a_value(gROPCSubscription subscription){
 ### Evenements d'abonnement
 
 Plusieurs types d'évenements peuvent être levés aucours d'un abonnement.
- - `.onChangeValue`, cet événement est lancé lorsque la valeure suivie par l'abonnement change. Cet événement se produit dans un thread (la fonction lancée s'executera donc dans un thread annexe).
- - `.onConnect`, cet énénement s'execute au moment où on demande un abonnement à une valeur et que le serveur nous réponds avec un identifiant. Cet événement se produit dans un thread (la fonction lancée s'executera donc dans un thread annexe).
- - `.onDisconnect`, cet événement s'execute lorsqu'on demande l'arrêt d'un abonnement. Cette événement n'est pas parallélisé.
- - `.onConnectionLost`, cet événement s'execute lorsque la connection est perdue entre l'application et le serveur renseigné.
- > Actuellement non fonctionnelle. Le package envoie des exceptions à la place.
 
+ - `.onChangeValue`,
+ 
+ Cet événement est lancé lorsque la valeure suivie par l'abonnement change. Cet événement se produit dans un thread (la fonction lancée s'executera donc dans un thread annexe).
+
+ `void fct(object sender, T value)` (T doit être du type de la valeure observée)
+
+ - `.onConnect`,
+ 
+ Cet énénement s'execute au moment où on demande un abonnement à une valeur et que le serveur nous réponds avec un identifiant. Cet événement se produit dans un thread (la fonction lancée s'executera donc dans un thread annexe).
+ 
+ `void fct(object sender)`
+
+ - `.onDisconnect`,
+ 
+ Cet événement s'execute lorsqu'on demande l'arrêt d'un abonnement. Cette événement n'est pas parallélisé.
+ 
+ `void fct(object sender)`
+
+ - `.onConnectionLost`,
+ 
+ Cet événement s'execute lorsque la connection est perdue entre l'application et le serveur renseigné.
+
+ `void fct(object sender, int attemptsCount)`
 
 ## Améliorations
  - 
