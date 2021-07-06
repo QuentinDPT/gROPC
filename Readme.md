@@ -50,6 +50,8 @@ public static void write_a_value<T>(gROPCService OPCService, string OPCValue, T 
 Lorsque le client souhaite s'abonner à une valeur de l'OPC, il lui sera donné un objet gROPCSubscription associé à un thread serveur gROPC pour qu'il puisse l'interrompre.
 Pour interrompre un abonnement, il suffit de demander à l'objet de se desabonner.
 
+L'abonnement est la seule fonctionnalité qui gère pleinement la déconnection au serveur. Les autres fonctionnalités envoient une erreur pour signaler qu'elles n'ont pas pu s'executer correctement
+
 Les identifiants client/server d'abonnement, ne correspondent pas à l'identifiant de l'abonnement OPC.
 
 ```C++
