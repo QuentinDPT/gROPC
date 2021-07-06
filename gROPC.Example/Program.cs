@@ -27,7 +27,7 @@ namespace gROPC.Example
 
             // CRUD
             Console.WriteLine("Part 1  \t Read");
-            //read_a_value();
+            read_a_value();
 
             Console.WriteLine("Complete");
 
@@ -40,12 +40,12 @@ namespace gROPC.Example
             System.Threading.Thread.Sleep(3000);
 
             Console.WriteLine("Part 2.2\t Unsubscription");
-            //unsubscribe_to_a_value(sub);
+            unsubscribe_to_a_value(sub);
 
             Console.WriteLine("Complete");
 
             Console.WriteLine("Part 3  \t Write");
-            //write_a_value();
+            write_a_value();
 
             Console.WriteLine("Complete");
             while (true) { }
