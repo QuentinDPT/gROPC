@@ -58,7 +58,7 @@ namespace gROPC
 
         public event EventHandler onConnect;
 
-        public event EventHandler onConnectionLost;
+        public event EventHandler<int> onConnectionLost;
 
 
         public gROPCSubscription(gROPC.gRPC.OPCUAServices.OPCUAServicesClient client, string nodeValue){
@@ -138,6 +138,7 @@ namespace gROPC
 
                 if (_reconnectionMaxAttempts == -1 || _reconnectionAttempt < _reconnectionMaxAttempts)
                 {
+                    onConnectionLost?.Invoke(this, _reconnectionAttempt);
                     System.Threading.Thread.Sleep(_reconnectionTimeout);
                     _subscriptionThread = _subscriptionThreadAsync();
                 }
