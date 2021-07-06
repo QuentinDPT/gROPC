@@ -111,34 +111,11 @@ namespace gROPC.Package
 
         private void _onRecieveValue(string value)
         {
-            T convertedValue = _convertValue<T>(value);
+            T convertedValue = gROPCConverter.ConvertType<T>(value);
 
             onChangeValue?.Invoke(this, convertedValue);
         }
 
-        private T _convertValue<T>(string value) where T : IConvertible
-        {
-            switch (typeof(T))
-            {
-                case Type intType when intType == typeof(int):
-                    return (T)(object)int.Parse(value);
-
-                case Type intType when intType == typeof(double):
-                    return (T)(object)double.Parse(value);
-
-                case Type intType when intType == typeof(float):
-                    return (T)(object)float.Parse(value);
-
-                case Type intType when intType == typeof(bool):
-                    return (T)(object)bool.Parse(value);
-
-                case Type intType when intType == typeof(string):
-                    return (T)(object)value;
-
-                default:
-                    throw new OPCUnsupportedType(value.GetType().Name);
-            }
-        }
 
         public void Unsubscribe()
         {
