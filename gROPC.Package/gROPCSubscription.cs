@@ -144,12 +144,15 @@ namespace gROPC
         /// <returns></returns>
         private async Task _subscriptionThreadAsync()
         {
+            if (!_subscribed)
+                return;
+
             try
             {
                 using (var result = _client.SubscribeValue(new gRPC.SubscribeValueRequest
-                {
-                    NodeValue = _nodeName
-                })
+                    {
+                        NodeValue = _nodeName
+                    })
                     )
                 {
                     try
@@ -171,7 +174,7 @@ namespace gROPC
                     bool streamActive = true;
 
                     // Getting every values form the gRPC stream
-                    while (streamActive)
+                    while (streamActive && _subscribed)
                     {
                         try
                         {
@@ -223,16 +226,23 @@ namespace gROPC
             onChangeValue?.Invoke(this, convertedValue);
         }
 
-
+        /// <summary>
+        /// Unsubscribe the current subscription
+        /// </summary>
+        /// <exception cref=""></exception>
+        /// <seealso cref="Subscribe"/>
         public void Unsubscribe()
         {
             if (!_subscribed)
                 return;
-
-            _client.UnsubscribeValue(new gRPC.UnsibscribeValueRequest
+            try
             {
-                SubscriptionId = this._GUID
-            });
+                _client.UnsubscribeValue(new gRPC.UnsibscribeValueRequest
+                {
+                    SubscriptionId = this._GUID
+                });
+            }catch(Exception ex)
+                { }
 
             _subscribed = false;
 
