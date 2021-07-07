@@ -95,7 +95,7 @@ namespace gROPC
         {
             try
             {
-                return Package.gROPCUtils.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
+                return gROPCUtils.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
                 {
                     NodeValue = nodeValue
                 }).Response);
