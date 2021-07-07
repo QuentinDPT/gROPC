@@ -7,6 +7,7 @@
     "url": "opc.tcp://localhost:49320"
   },
   "whitelist": [
-    "ns=2;s=Channel1.Device1.TEST"
+    "ns=2;s=Channel1.Device1.TEST",
+    "ns=2;s=Channel1.Device1.Tag1"
   ]
 }

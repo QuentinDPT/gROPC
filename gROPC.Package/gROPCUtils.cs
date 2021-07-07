@@ -3,11 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace gROPC.Package
+namespace gROPC
 {
-    public class gROPCConverter
+    public static class gROPCUtils
     {
-        public static T ConvertType<T>(string value) where T : IConvertible
+        public static T[] SubArray<T>(this T[] data, int index, int length = -1)
+        {
+            if (length == -1)
+                length = data.Length - index;
+
+            T[] result = new T[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
+        }
+
+        public static T ConvertType<T>(this string value) where T : IConvertible
         {
             switch (typeof(T))
             {

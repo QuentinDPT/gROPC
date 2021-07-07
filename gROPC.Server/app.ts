@@ -9,6 +9,8 @@ var grpc = require("@grpc/grpc-js");
 var protoLoader = require('@grpc/proto-loader');
 const { combine, timestamp, label, printf } = format;
 
+var subscriptionResultSeparator = "<#.#>";
+
 // formatting the logger result
 const myFormat = printf(({ level, message, service, timestamp }) => {
     return `${timestamp} [${service}] ${level}: ${message}`;
@@ -85,11 +87,14 @@ var valuesTracked = [];
  */
 async function _subscribeValue(call, callback) {
     let subid = "";
+    let returnValuesAssociated = [];
 
     // create the GUID
     do {
         subid = uuidv4();
     } while (valuesTracked.find(x => x.subscriptionID == subid) != null);
+
+    returnValuesAssociated = call.request.returnedValues.split(subscriptionResultSeparator);
 
     // the first response will be the ID of the listener
     call.write({
@@ -104,10 +109,29 @@ async function _subscribeValue(call, callback) {
         if (!stillOnline)
             return;
 
+        let associatedValuesPromises = [];
+        let associatedValues = [];
+        let responseString = result;
+
+        if (returnValuesAssociated.length != 0) {
+
+            // sending requests for additionnal information
+            for (let i of returnValuesAssociated) {
+                associatedValuesPromises.push(OPC.readValue(i));
+            }
+
+            // getting additionnal information
+            await Promise.all(associatedValuesPromises).then((values) => {
+                associatedValues = values;
+            });
+
+            responseString += subscriptionResultSeparator + associatedValues.join(subscriptionResultSeparator);
+        }
+
         // send to the client the information
         stillOnline = call.write({
             subsciptionId: subid,
-            response: result
+            response: responseString
         });
 
         // if the client has disconnected

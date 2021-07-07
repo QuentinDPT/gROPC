@@ -95,7 +95,7 @@ namespace gROPC
         {
             try
             {
-                return Package.gROPCConverter.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
+                return Package.gROPCUtils.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
                 {
                     NodeValue = nodeValue
                 }).Response);
@@ -177,7 +177,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -205,7 +205,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -233,7 +233,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -261,7 +261,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);

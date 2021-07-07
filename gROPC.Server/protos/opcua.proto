@@ -23,6 +23,7 @@ message ReadValueResult {
 
 message SubscribeValueRequest {
 	string nodeValue = 1;
+	string returnedValues = 2;
 }
 
 message SubscribeValueResponse {
