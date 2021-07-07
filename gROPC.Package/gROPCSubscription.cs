@@ -1,6 +1,8 @@
-﻿using gROPC.Package.Exceptions;
+﻿using gROPC.Package;
+using gROPC.Package.Exceptions;
 using Grpc.Core;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace gROPC
@@ -27,6 +29,25 @@ namespace gROPC
         public string NodeValue {
             get { return _nodeName; }
             set { }
+        }
+
+        private string _returnedValues = "";
+        private string _returnedValuesSeparator = "<#.#>";
+        public List<string> ReturnedValues
+        {
+            get { return new List<string>(_returnedValues.Split(_returnedValuesSeparator)); }
+            set {
+                if (_subscribed)
+                    throw new Exception("The subscription is already running");
+
+                foreach(var i in value)
+                {
+                    if (i.Contains(_returnedValuesSeparator))
+                        throw new ArgumentException("The separator is contained into this array : \"" + _returnedValuesSeparator + "\"");
+                }
+
+                _returnedValues = string.Join(_returnedValuesSeparator, value);
+            }
         }
 
         private bool _subscribed;
@@ -84,7 +105,7 @@ namespace gROPC
         /// <summary>
         /// Event throwed when the OPC's value change
         /// </summary>
-        public event EventHandler<T> onChangeValue;
+        public event EventHandler<SubscriptionResponse<T>> onChangeValue;
 
         /// <summary>
         /// Event throwed when the subscription has normally disconnected
@@ -113,6 +134,8 @@ namespace gROPC
 
             _reconnectionTimeout = 2200;
             _reconnectionMaxAttempts = -1;
+
+
         }
 
         public gROPCSubscription(gRPC.OPCUAServices.OPCUAServicesClient client, string nodeName, int reconnectionTimeout, int reconnectionMaxAttempts)
@@ -144,12 +167,16 @@ namespace gROPC
         /// <returns></returns>
         private async Task _subscriptionThreadAsync()
         {
+            if (!_subscribed)
+                return;
+
             try
             {
                 using (var result = _client.SubscribeValue(new gRPC.SubscribeValueRequest
-                {
-                    NodeValue = _nodeName
-                })
+                    {
+                        NodeValue = _nodeName,
+                        ReturnedValues = _returnedValues
+                    })
                     )
                 {
                     try
@@ -171,7 +198,7 @@ namespace gROPC
                     bool streamActive = true;
 
                     // Getting every values form the gRPC stream
-                    while (streamActive)
+                    while (streamActive && _subscribed)
                     {
                         try
                         {
@@ -188,7 +215,10 @@ namespace gROPC
 
                         // if it's not muted or unsubscribed
                         if (!_muted && _subscribed)
-                            _onRecieveValue(feature.Response);
+                        {
+                            string[] values = feature.Response.Split(_returnedValuesSeparator);
+                            _onRecieveValue(values[0],values.SubArray(1));
+                        }
                     }
                 }
             }catch(gRPCDisconnected ex){
@@ -216,23 +246,39 @@ namespace gROPC
         /// Convert the type oh the value recieve from the gROPC server and throw the event onChangeValue
         /// </summary>
         /// <param name="value">value that has changed</param>
-        private void _onRecieveValue(string value)
+        private void _onRecieveValue(string value, string[] valuesReturned)
         {
-            T convertedValue = Package.gROPCConverter.ConvertType<T>(value);
+            var response = new SubscriptionResponse<T>()
+            {
+                responseValue = value.ConvertType<T>(),
+                responsesAssociated = new Dictionary<string, string>()
+            };
 
-            onChangeValue?.Invoke(this, convertedValue);
+            for(var index = 0; index < valuesReturned.Length; index++)
+            {
+                response.responsesAssociated.Add(ReturnedValues[index],valuesReturned[index]);
+            }
+
+            onChangeValue?.Invoke(this, response);
         }
 
-
+        /// <summary>
+        /// Unsubscribe the current subscription
+        /// </summary>
+        /// <exception cref=""></exception>
+        /// <seealso cref="Subscribe"/>
         public void Unsubscribe()
         {
             if (!_subscribed)
                 return;
-
-            _client.UnsubscribeValue(new gRPC.UnsibscribeValueRequest
+            try
             {
-                SubscriptionId = this._GUID
-            });
+                _client.UnsubscribeValue(new gRPC.UnsibscribeValueRequest
+                {
+                    SubscriptionId = this._GUID
+                });
+            }catch(Exception ex)
+                { }
 
             _subscribed = false;
 

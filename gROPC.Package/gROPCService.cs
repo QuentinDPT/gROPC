@@ -95,7 +95,7 @@ namespace gROPC
         {
             try
             {
-                return Package.gROPCConverter.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
+                return Package.gROPCUtils.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
                 {
                     NodeValue = nodeValue
                 }).Response);
@@ -115,6 +115,13 @@ namespace gROPC
         /// <typeparam name="T">Type of the variable observed</typeparam>
         /// <param name="nodeValue">Name of the node readed</param>
         /// <returns>Subscription class</returns>
+        /// <example>
+        /// <code>
+        /// var subscription = OPCService.Subscribe<int>(OPCValue);
+        /// subscription.onChangeValue += ma_fonction;
+        /// return subscription.Subscribe();
+        /// </code>
+        /// </example>
         public gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
         {
             return new gROPCSubscription<T>(this._client, nodeValue, _reconnectionTimeout, _reconnectionMaxAttempts);
@@ -170,7 +177,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -198,7 +205,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -226,7 +233,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
@@ -254,7 +261,7 @@ namespace gROPC
                 case "OK":
                     break;
                 case "UNAUTHORIZED":
-                    throw new OPCUnauthorizedOperation(response);
+                    throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
                     break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
