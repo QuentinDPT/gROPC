@@ -6,26 +6,43 @@ using gROPC.Package.Exceptions;
 
 namespace gROPC
 {
+    /// <summary>
+    /// gROPC service to connect to the gROPC server
+    /// </summary>
     public class gROPCService
     {
+        /// <summary>
+        /// gROPC client
+        /// </summary>
         private gRPC.OPCUAServices.OPCUAServicesClient _client;
 
+        /// <summary>
+        /// URL of the gROPC server
+        /// </summary>
         private string _serverURL;
 
+        /// <summary>
+        /// Represents the connection between the package and the gROPC server
+        /// </summary>
         private Channel _channel;
 
+        /// <summary>
+        /// Timeout before retying to reconnect
+        /// </summary>
         private int _reconnectionTimeout;
 
+        /// <summary>
+        /// Number of reconnection allowed before giving up
+        /// </summary>
         private int _reconnectionMaxAttempts;
 
-        public int LastID
+        /// <summary>
+        /// Connects to a gROPC server
+        /// </summary>
+        /// <param name="serverURL">URL of the gROPC</param>
+        public gROPCService(string serverURL)
         {
-            get; private set;
-        }
-
-        public gROPCService(string serverURL, int serverPort)
-        {
-            _serverURL = serverURL + ":" + serverPort;
+            _serverURL = serverURL;
 
             _channel = new Channel(_serverURL, ChannelCredentials.Insecure);
 
@@ -35,8 +52,30 @@ namespace gROPC
 
             _reconnectionTimeout = 1600;
         }
+
+        /// <summary>
+        /// Connects to a gROPC server
+        /// </summary>
+        /// <param name="serverURL">URL of the server</param>
+        /// <param name="serverPort">Port used for the server</param>
+        public gROPCService(string serverURL, int serverPort) : this(serverURL + ":" + serverPort)
+            { }
+
+        /// <summary>
+        /// Connects to a gROPC server, with reconnection parameters
+        /// </summary>
+        /// <param name="serverURL">URL of the server</param>
+        /// <param name="serverPort">Port used for the server</param>
+        /// <param name="reconnectionTimeout">Timeout before retying to connect</param>
+        /// <param name="reconnectionMaxAttempts">Number of reconnection allowed before giving up</param>
         public gROPCService(string serverURL, int serverPort, int reconnectionTimeout, int reconnectionMaxAttempts) : this(serverURL, serverPort)
         {
+            if (reconnectionTimeout <= 0)
+                throw new ArgumentException("reconnectionTimeout should be greater than 0");
+
+            if (reconnectionMaxAttempts < -1)
+                reconnectionMaxAttempts = -1;
+
             _reconnectionTimeout = reconnectionTimeout;
             _reconnectionMaxAttempts = reconnectionMaxAttempts;
         }
@@ -46,26 +85,19 @@ namespace gROPC
             _channel.ShutdownAsync().Wait();
         }
 
-        public gROPCService(string serverURL)
-        {
-            _serverURL = serverURL;
-
-            Channel channel = new Channel(_serverURL, ChannelCredentials.Insecure);
-
-            _client = new gRPC.OPCUAServices.OPCUAServicesClient(channel);
-
-            _reconnectionMaxAttempts = -1;
-
-            _reconnectionTimeout = 1600;
-        }
-
-        public T Read<T>(string value) where T : IConvertible
+        /// <summary>
+        /// Read a value from the OPC
+        /// </summary>
+        /// <typeparam name="T">Type of the variable currently readed</typeparam>
+        /// <param name="nodeValue">Name of the node readed</param>
+        /// <returns>value wanted</returns>
+        public T Read<T>(string nodeValue) where T : IConvertible
         {
             try
             {
                 return Package.gROPCConverter.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
                 {
-                    NodeValue = value
+                    NodeValue = nodeValue
                 }).Response);
             }
             catch (OPCUnsupportedType ex) {
@@ -77,62 +109,50 @@ namespace gROPC
             }
         }
 
+        /// <summary>
+        /// Subscribe to a value on the OPC
+        /// </summary>
+        /// <typeparam name="T">Type of the variable observed</typeparam>
+        /// <param name="nodeValue">Name of the node readed</param>
+        /// <returns>Subscription class</returns>
         public gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
         {
             return new gROPCSubscription<T>(this._client, nodeValue, _reconnectionTimeout, _reconnectionMaxAttempts);
         }
 
+        /// <summary>
+        /// Write a value on the OPC
+        /// </summary>
+        /// <typeparam name="T">Type of the variable we want to write</typeparam>
+        /// <param name="nodeValue">Name of the node we want to rite</param>
+        /// <param name="value">Value we want to set on the OPC</param>
         public void Write<T>(string nodeValue, T value)
         {
-            switch (value)
+            try
             {
-                case int i:
-                    try
-                    {
+                switch (value)
+                {
+                    case int i:
                         _writeInt(nodeValue, i);
-                    }catch(Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    }
-                    return;
-                case double d:
-                    try
-                    {
+                        return;
+                    case double d:
                         _writeDouble(nodeValue, d);
-                    }catch (Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    }
-                    return;
-                case float d:
-                    try
-                    {
+                        return;
+                    case float d:
                         _writeDouble(nodeValue, d);
-                    }catch(Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    }
-                    return;
-                case bool b:
-                    try
-                    {
+                        return;
+                    case bool b:
                         _writeBool(nodeValue, b);
-                    }catch (Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    }
-                    return;
-                case string s:
-                    try
-                    {
-                        _writeString(nodeValue, s);
-                    }catch (Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    }
-                    return;
-                default:
-                    throw new OPCUnsupportedType(value.GetType().Name);
+                        return;
+                    case string s:
+                         _writeString(nodeValue, s);
+                        return;
+                    default:
+                        throw new OPCUnsupportedType(value.GetType().Name);
+                }
+            }catch(Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -187,7 +207,7 @@ namespace gROPC
                     throw new OPCUnknownType(response);
                     break;
                 default:
-                    throw new Exception("Unknown exception: something went wrong");
+                    throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
                     break;
             }
         }
@@ -215,7 +235,7 @@ namespace gROPC
                     throw new OPCUnknownType(response);
                     break;
                 default:
-                    throw new Exception("Unknown exception: something went wrong");
+                    throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
                     break;
             }
         }
@@ -243,7 +263,7 @@ namespace gROPC
                     throw new OPCUnknownType(response);
                     break;
                 default:
-                    throw new Exception("Unknown exception: something went wrong");
+                    throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
                     break;
             }
         }

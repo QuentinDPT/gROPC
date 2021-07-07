@@ -4,9 +4,10 @@ namespace gROPC.Example
 {
     class Program
     {
+        //private static string serverURL = "frsxbscdev01.sxb.punchpowerglide.com:1014";
         private static string serverURL = "localhost:50000";
 
-        private static string OPCValue = "ns=2;s=Channel1.Device1.TEST";
+        private static string OPCValue = "ns=2;s=Channel1.Device1.Tag1";
 
         private static gROPCService OPCService;
 
@@ -48,6 +49,13 @@ namespace gROPC.Example
             write_a_value();
 
             Console.WriteLine("Complete");
+
+            Console.WriteLine("Part 4.1\t Deconnection");
+
+            sub = subscribe_to_a_value();
+
+            Console.WriteLine("You can now restart the server");
+
             while (true) { }
         }
 
