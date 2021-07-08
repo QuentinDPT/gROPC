@@ -118,3 +118,4 @@ Plusieurs types d'évenements peuvent être levés aucours d'un abonnement.
 
 ## Améliorations
  - Sub on unexisting value
+ - Add onError on the subscription class
