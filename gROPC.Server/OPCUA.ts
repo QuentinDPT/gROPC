@@ -259,6 +259,17 @@ module.exports = {
                 // returning "OK" is the only way for the client to not to crash
                 return "OK";
             }
+
+            /**
+             * Testing if the nodeName exists on the OPC
+             * 
+             * @param nodeName the name of the node tested
+             */
+            public async isValid(nodeName: string) {
+                let a = await this._session.readVariableValue(nodeName);
+               
+                return a.statusCode.name != "BadNodeIdUnknown";
+            }
         },
     OPCUA_whitelist: ___OPCUA_WHITELIST
 }

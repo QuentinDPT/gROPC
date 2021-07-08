@@ -94,13 +94,35 @@ async function _subscribeValue(call, callback) {
         subid = uuidv4();
     } while (valuesTracked.find(x => x.subscriptionID == subid) != null);
 
+    // getting the list of values associated
     returnValuesAssociated = call.request.returnedValues.split(subscriptionResultSeparator);
+
+    let throwNodeNameError = function (nodeName: string) {
+        call.write({
+            subsciptionId: -1,
+            response: nodeName
+        });
+    }
+
+    // Testing if all values are existing on the OPC
+    if (!await OPC.isValid(call.request.nodeValue)) {
+        throwNodeNameError(call.request.nodeValue);
+        return;
+    }
+
+    for (let i of returnValuesAssociated) {
+        if (!await OPC.isValid(i)) {
+            throwNodeNameError(i);
+            return;
+        }
+    }
 
     // the first response will be the ID of the listener
     call.write({
         subsciptionId: subid,
         response: ""
     });
+
 
     // then we subscribe to the OPC server
     let stillOnline = true;

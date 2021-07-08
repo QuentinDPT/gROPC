@@ -123,6 +123,9 @@ namespace gROPC
         /// </summary>
         public event EventHandler<int> onConnectionLost;
 
+
+        public event EventHandler<Exception> onError;
+
         /// <summary>
         /// Create an object ready to subscribe to a value
         /// </summary>
@@ -169,76 +172,94 @@ namespace gROPC
         {
             if (!_subscribed)
                 return;
-
             try
             {
-                using (var result = _client.SubscribeValue(new gRPC.SubscribeValueRequest
+                try
+                {
+                    using (var result = _client.SubscribeValue(new gRPC.SubscribeValueRequest
                     {
                         NodeValue = _nodeName,
                         ReturnedValues = _returnedValues
                     })
-                    )
-                {
-                    try
-                    {
-                        await result.ResponseStream.MoveNext();
-                        _reconnectionAttempt = 0;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new gRPCDisconnected("Cannot connect to the server endpoint");
-                    }
-
-                    this._GUID = result.ResponseStream.Current.SubsciptionId;
-
-                    // onConnected throwed
-                    _subscribed = true;
-                    onConnect?.Invoke(this, null);
-
-                    bool streamActive = true;
-
-                    // Getting every values form the gRPC stream
-                    while (streamActive && _subscribed)
+                        )
                     {
                         try
                         {
-                            // try to get the latest value
-                            streamActive = await result.ResponseStream.MoveNext();
+                            await result.ResponseStream.MoveNext();
+                            _reconnectionAttempt = 0;
                         }
                         catch (Exception ex)
                         {
-                            throw new gRPCDisconnected("An error was encountered while streaming data");
+                            throw new gRPCDisconnected("Cannot connect to the server endpoint");
                         }
 
-                        // getting the value returned by the gROPC server
-                        gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
+                        this._GUID = result.ResponseStream.Current.SubsciptionId;
 
-                        // if it's not muted or unsubscribed
-                        if (!_muted && _subscribed)
+                        if (this._GUID == "-1")
                         {
-                            string[] values = feature.Response.Split(_returnedValuesSeparator);
-                            _onRecieveValue(values[0],values.SubArray(1));
+                            throw new OPCUnknownNode(result.ResponseStream.Current.Response);
+                        }
+
+                        // onConnected throwed
+                        _subscribed = true;
+                        onConnect?.Invoke(this, null);
+
+                        bool streamActive = true;
+
+                        // Getting every values form the gRPC stream
+                        while (streamActive && _subscribed)
+                        {
+                            try
+                            {
+                                // try to get the latest value
+                                streamActive = await result.ResponseStream.MoveNext();
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new gRPCDisconnected("An error was encountered while streaming data");
+                            }
+
+                            // getting the value returned by the gROPC server
+                            gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
+
+                            // if it's not muted or unsubscribed
+                            if (!_muted && _subscribed)
+                            {
+                                string[] values = feature.Response.Split(_returnedValuesSeparator);
+                                _onRecieveValue(values[0], values.SubArray(1));
+                            }
                         }
                     }
                 }
-            }catch(gRPCDisconnected ex){
-                // if we had a connection issue
-                _reconnectionAttempt++;
-
-                if (_reconnectionMaxAttempts == -1 || _reconnectionAttempt < _reconnectionMaxAttempts)
+                catch (gRPCDisconnected ex)
                 {
-                    // if we can try to reconnect instead of throwing an error
-                    onConnectionLost?.Invoke(this, _reconnectionAttempt);
+                    // if we had a connection issue
+                    _reconnectionAttempt++;
 
-                    System.Threading.Thread.Sleep(_reconnectionTimeout);
+                    if (_reconnectionMaxAttempts == -1 || _reconnectionAttempt < _reconnectionMaxAttempts)
+                    {
+                        // if we can try to reconnect instead of throwing an error
+                        onConnectionLost?.Invoke(this, _reconnectionAttempt);
 
-                    // recursively redo the connection protocol
-                    _subscriptionThread = _subscriptionThreadAsync();
+                        System.Threading.Thread.Sleep(_reconnectionTimeout);
+
+                        // recursively redo the connection protocol
+                        _subscriptionThread = _subscriptionThreadAsync();
+                    }
+                    else
+                    {
+                        throw new gRPCDisconnected(ex.Reason);
+                    }
                 }
+            }catch(Exception ex)
+            {
+                _subscribed = false;
+
+                // throw the error on client side
+                if (onError == null)
+                    throw ex;
                 else
-                {
-                    throw new gRPCDisconnected(ex.Reason) ;
-                }
+                    onError.Invoke(this, ex);
             }
         }
 

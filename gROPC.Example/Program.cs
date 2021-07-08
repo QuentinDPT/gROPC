@@ -5,7 +5,7 @@ namespace gROPC.Example
 {
     class Program
     {
-        //private static string serverURL = "frsxbscdev01.sxb.punchpowerglide.com:1014";
+        //private static string serverURL = "frsxbscdev01.sxb.punchpowerglide.com:50000";
         private static string serverURL = "localhost:50000";
 
         private static string OPCValue  = "ns=2;s=Channel1.Device1.Tag1";
@@ -113,7 +113,7 @@ namespace gROPC.Example
         /// Function launched each time we have a new value from OPC server
         /// </summary>
         /// <param name="value">value readed</param>
-        static void onRecieve(object sender, Package.SubscriptionResponse<int> value)
+        static void onRecieve(object sender, SubscriptionResponse<int> value)
         {
             Console.WriteLine(" > Recieve a value : " + value.responseValue);
             Console.WriteLine(" > Associated      : " + value.responsesAssociated[OPCValue2]);
