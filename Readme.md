@@ -117,4 +117,4 @@ Plusieurs types d'évenements peuvent être levés aucours d'un abonnement.
  `void fct(object sender, int attemptsCount)`
 
 ## Améliorations
- - 
+ - Sub on unexisting value
