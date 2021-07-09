@@ -155,10 +155,12 @@ async function _subscribeValue(call, callback) {
         }
 
         // send to the client the information
-        stillOnline = call.write({
+        call.write({
             subsciptionId: subid,
             response: responseString
         });
+        stillOnline = !call.call.stream.closed;
+
 
         // if the client has disconnected
         if (!stillOnline) {
