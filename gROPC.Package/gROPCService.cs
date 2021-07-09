@@ -191,6 +191,8 @@ namespace gROPC
                     throw new OPCWrongType(response);
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
+                case "UNKNOWN_NODE":
+                    throw new OPCUnknownNode(nodeValue);
                 default:
                     throw new Exception("Unknown exception: something went wrong");
             }
@@ -215,6 +217,8 @@ namespace gROPC
                     throw new OPCWrongType(response);
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
+                case "UNKNOWN_NODE":
+                    throw new OPCUnknownNode(nodeValue);
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
             }
@@ -239,6 +243,8 @@ namespace gROPC
                     throw new OPCWrongType(response);
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
+                case "UNKNOWN_NODE":
+                    throw new OPCUnknownNode(nodeValue);
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
             }
@@ -263,6 +269,8 @@ namespace gROPC
                     throw new OPCWrongType(response);
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
+                case "UNKNOWN_NODE":
+                    throw new OPCUnknownNode(nodeValue);
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
             }

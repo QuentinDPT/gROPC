@@ -216,9 +216,13 @@ async function _unsubscribeValue(call, callback) {
  * @param callback function called to end the request
  */
 async function _writeValue(call, callback) {
-    let result = await OPC.writeValue(call.request.nodeValue, call.request.value, call.request.type);
+    try {
+        let result = await OPC.writeValue(call.request.nodeValue, call.request.value, call.request.type);
 
-    callback(null, { response: result });
+        callback(null, { response: result });
+    } catch (ex) {
+        callback(null, { response: "UNKNOWN_NODE" });
+    }
 }
 
 /**
