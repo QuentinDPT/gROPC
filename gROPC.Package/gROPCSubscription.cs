@@ -219,14 +219,17 @@ namespace gROPC
                                 throw new gRPCDisconnected("An error was encountered while streaming data");
                             }
 
-                            // getting the value returned by the gROPC server
-                            gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
-
-                            // if it's not muted or unsubscribed
-                            if (!_muted && _subscribed)
+                            if (streamActive && _subscribed)
                             {
-                                string[] values = feature.Response.Split(_returnedValuesSeparator);
-                                _onRecieveValue(values[0], values.SubArray(1));
+                                // getting the value returned by the gROPC server
+                                gRPC.SubscribeValueResponse feature = result.ResponseStream.Current;
+
+                                // if it's not muted or unsubscribed
+                                if (!_muted && _subscribed)
+                                {
+                                    string[] values = feature.Response.Split(_returnedValuesSeparator);
+                                    _onRecieveValue(values[0], values.SubArray(1));
+                                }
                             }
                         }
                     }

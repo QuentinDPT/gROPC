@@ -71,9 +71,13 @@ OPC._logger = logger;
  * @param callback function called to end the request
  */
 async function _readValue(call, callback) {
-    let result = await OPC.readValue(call.request.nodeValue);
+    try {
+        let result = await OPC.readValue(call.request.nodeValue);
 
-    callback(null, { response: result });
+        callback(null, { response: result });
+    } catch (ex) {
+        callback(null, { response: "UNKNOWN NODE" });
+    }
 }
 
 /// List of all subscribtion tracked

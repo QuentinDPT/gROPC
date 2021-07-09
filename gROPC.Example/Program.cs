@@ -9,7 +9,7 @@ namespace gROPC.Example
         private static string serverURL = "localhost:50000";
 
         private static string OPCValue  = "ns=2;s=Channel1.Device1.Tag1";
-        private static string OPCValue2 = "ns=2;s=Channel1.Device1.Tag2";
+        private static string OPCValue2 = "ns=2;s=Channel1.Device1.Tag2test";
 
         private static gROPCService OPCService;
 

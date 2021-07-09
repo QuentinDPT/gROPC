@@ -95,15 +95,24 @@ namespace gROPC
         {
             try
             {
-                return gROPCUtils.ConvertType<T>(_client.ReadValue(new gRPC.ReadValueRequest
+                string requestResponse = _client.ReadValue(new gRPC.ReadValueRequest
                 {
                     NodeValue = nodeValue
-                }).Response);
+                }).Response;
+
+                if (requestResponse == "UNKNOWN NODE")
+                    throw new OPCUnknownNode(nodeValue);
+
+                return gROPCUtils.ConvertType<T>(requestResponse);
             }
             catch (OPCUnsupportedType ex) {
                 throw ex;
             }
-            catch(Exception ex)
+            catch(OPCUnknownNode ex)
+            {
+                throw ex;
+            }
+            catch(Exception _)
             {
                 throw new gRPCDisconnected("Cannot read, communication cannot be establiched");
             }
@@ -178,16 +187,12 @@ namespace gROPC
                     break;
                 case "UNAUTHORIZED":
                     throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
-                    break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
-                    break;
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
-                    break;
                 default:
                     throw new Exception("Unknown exception: something went wrong");
-                    break;
             }
         }
 
@@ -206,16 +211,12 @@ namespace gROPC
                     break;
                 case "UNAUTHORIZED":
                     throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
-                    break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
-                    break;
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
-                    break;
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    break;
             }
         }
 
@@ -234,16 +235,12 @@ namespace gROPC
                     break;
                 case "UNAUTHORIZED":
                     throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
-                    break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
-                    break;
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
-                    break;
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    break;
             }
         }
 
@@ -262,16 +259,12 @@ namespace gROPC
                     break;
                 case "UNAUTHORIZED":
                     throw new OPCUnauthorizedOperation(response + " \"" + nodeValue + "\"");
-                    break;
                 case "WRONG_TYPE":
                     throw new OPCWrongType(response);
-                    break;
                 case "UNKNOWN_TYPE":
                     throw new OPCUnknownType(response);
-                    break;
                 default:
                     throw new gRPCDisconnected("Cannot write, communication cannot be establiched");
-                    break;
             }
         }
     }
