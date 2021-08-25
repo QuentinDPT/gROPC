@@ -5,11 +5,12 @@ namespace gROPC.Example
 {
     class Program
     {
+        private static string serverURL = "frmfgopc02.sxb.punchpowerglide.com:50000";
         //private static string serverURL = "frsxbscdev01.sxb.punchpowerglide.com:50000";
-        private static string serverURL = "localhost:50000";
+        //private static string serverURL = "localhost:50000";
 
         private static string OPCValue  = "ns=2;s=Channel1.Device1.Tag1";
-        private static string OPCValue2 = "ns=2;s=Channel1.Device1.Tag2test";
+        private static string OPCValue2 = "ns=2;s=Channel1.Device1.Tag2";
 
         private static gROPCService OPCService;
 
