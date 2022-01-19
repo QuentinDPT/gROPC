@@ -91,7 +91,7 @@ namespace gROPC
         /// <typeparam name="T">Type of the variable currently readed</typeparam>
         /// <param name="nodeValue">Name of the node readed</param>
         /// <returns>value wanted</returns>
-        public T Read<T>(string nodeValue) where T : IConvertible
+        public T Read<T>(string nodeValue)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace gROPC
             {
                 throw ex;
             }
-            catch(Exception _)
+            catch(Exception)
             {
                 throw new gRPCDisconnected("Cannot read, communication cannot be establiched");
             }
