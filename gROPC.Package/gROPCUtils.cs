@@ -1,6 +1,7 @@
 ﻿using gROPC.Package.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace gROPC
@@ -17,7 +18,7 @@ namespace gROPC
             return result;
         }
 
-        public static T ConvertType<T>(this string value) where T : IConvertible
+        public static T ConvertType<T>(this string value)
         {
             switch (typeof(T))
             {
@@ -35,6 +36,9 @@ namespace gROPC
 
                 case Type intType when intType == typeof(string):
                     return (T)(object)value;
+
+                case Type intType when intType == typeof(byte[]):
+                    return (T)(object)value.Split(",").Select(x => byte.Parse(x)).ToArray();
 
                 default:
                     throw new OPCUnsupportedType(value.GetType().Name);
