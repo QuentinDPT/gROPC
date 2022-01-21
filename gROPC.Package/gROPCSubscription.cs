@@ -11,7 +11,7 @@ namespace gROPC
     /// Subscribe to an OPC value
     /// </summary>
     /// <typeparam name="T">Type of the variable observed</typeparam>
-    public class gROPCSubscription<T> where T : IConvertible
+    public class gROPCSubscription<T>
     {
         private string _GUID;
         /// <summary>

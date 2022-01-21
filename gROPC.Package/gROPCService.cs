@@ -131,7 +131,7 @@ namespace gROPC
         /// return subscription.Subscribe();
         /// </code>
         /// </example>
-        public gROPCSubscription<T> Subscribe<T>(string nodeValue) where T : IConvertible
+        public gROPCSubscription<T> Subscribe<T>(string nodeValue)
         {
             return new gROPCSubscription<T>(this._client, nodeValue, _reconnectionTimeout, _reconnectionMaxAttempts);
         }
